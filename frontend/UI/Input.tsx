@@ -2,11 +2,13 @@ import React from "react";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string;
+  type?:string
 }
 
 export const Input = ({
   placeholder = "Enter something...",
   className = "",
+  type="text",
   ...props
 }: InputProps) => {
   const baseClasses =
@@ -22,6 +24,7 @@ export const Input = ({
       placeholder={placeholder}
       className={`${baseClasses} ${responsiveClasses} ${placeholderClasses} ${className}`}
       {...props}
+      type={type}
     />
   );
 };

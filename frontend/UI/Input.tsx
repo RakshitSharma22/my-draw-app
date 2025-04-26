@@ -1,14 +1,20 @@
 import React from "react";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  
   className?: string;
   type?:string
+  onChange?:(e: React.ChangeEvent<HTMLInputElement>)=>void
+  inputValue:string
+  
 }
 
 export const Input = ({
   placeholder = "Enter something...",
   className = "",
   type="text",
+  onChange,
+  inputValue,
   ...props
 }: InputProps) => {
   const baseClasses =
@@ -25,6 +31,8 @@ export const Input = ({
       className={`${baseClasses} ${responsiveClasses} ${placeholderClasses} ${className}`}
       {...props}
       type={type}
+      onChange={onChange}
+      value={inputValue}
     />
   );
 };

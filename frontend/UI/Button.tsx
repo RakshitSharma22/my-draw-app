@@ -6,12 +6,14 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   children: React.ReactNode;
   className?: string;
+  onClick?:(e:React.MouseEvent<HTMLButtonElement>)=>void
 }
 
 export const Button = ({
   variant = "primary",
   children,
   className = "",
+  onClick,
   ...props
 }:ButtonProps) => {
   const baseClasses =
@@ -33,6 +35,7 @@ export const Button = ({
   return (
     <button
       className={`${baseClasses} ${responsiveClasses} ${variantClasses} ${className}`}
+      onClick={onClick}
       {...props}
     >
       {children}

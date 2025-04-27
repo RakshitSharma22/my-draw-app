@@ -1,6 +1,7 @@
 "use client"
 import { Button } from "@/UI/Button";
 import { Input } from "@/UI/Input";
+import Thank from "@/components/Thank";
 import { ErrorState } from "@/utils/Type";
 import { check2passwords, validEmail, validName, validPassword } from "@/utils/validation";
 import Link from "next/link";
@@ -65,7 +66,7 @@ export default function SignUp() {
   } 
   if(success)
   {
-    return <></>
+    return <Thank/>
   }
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">

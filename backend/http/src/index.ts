@@ -1,10 +1,15 @@
 import express,{Request,Response} from "express"
 import { PrismaClient } from "@prisma/client"
 import bcrypt from "bcryptjs"
+import cors from 'cors';
+
+
 const app=express()
+
 const PORT=8000
 const prisma=new PrismaClient()
 app.use(express.json())
+app.use(cors());
 
 
 app.get("/",(req:Request,res:Response)=>{

@@ -3,4 +3,5 @@ export interface ErrorState {
     emailError?: string;
     passwordError?: string;
     confirmPasswordError?:string
+    serverError?:string
   };

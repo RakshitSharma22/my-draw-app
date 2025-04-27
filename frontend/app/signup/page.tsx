@@ -6,6 +6,7 @@ import { ErrorState } from "@/utils/Type";
 import { check2passwords, validEmail, validName, validPassword } from "@/utils/validation";
 import Link from "next/link";
 import { useState } from "react";
+import axios from "axios";
 
 export default function SignUp() {
   const [fullName,setFullName]=useState<string>("")
@@ -33,9 +34,10 @@ export default function SignUp() {
     setPassword(e.target.value)
   }
 
-  function handleSignUp(e:React.MouseEvent<HTMLButtonElement>){
+  async function handleSignUp(e:React.MouseEvent<HTMLButtonElement>){
     e.preventDefault()
     setError({})
+    
     const isEmailValid=validEmail(email)
     const isPasswordValid=validPassword(password)
    
@@ -43,30 +45,57 @@ export default function SignUp() {
     if(!validName(fullName))
     {
       setError((prev)=> ({...prev,nameError:"Please Enter a valid name"}))
+      return
     }
     
     if(!isEmailValid)
     {
       setError((prev)=> ({...prev,emailError:"Please Enter a valid email"}))
+      return
     }
 
     if(!isPasswordValid)
     {
       setError((prev)=> ({...prev,passwordError:"Please Enter a valid password"}))
+      return
     }
     
 
     if(!check2passwords(password,confirmPassword))
     {
       setError((prev)=> ({...prev,confirmPasswordError:"Both passwords are not matching"}))
+      return
     }
-      
-    setSuccess(true)
+   
+    const response = await fetch("http://localhost:8000/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fullName,
+        email,
+        password,
+      }),
+    });
+    const data = await response.json();
+    console.log(data)
+
+    if(data?.error){
+      setError((prev)=> ({...prev,serverError:`Serve Error : ${data?.error} `}))
+      setSuccess(false)
+      return
+    } 
+    if(data?.message){
+      setSuccess(true)
+      return
+    }
+   
 
   } 
   if(success)
   {
-    return <Thank/>
+    return <Thank />
   }
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
@@ -111,7 +140,10 @@ export default function SignUp() {
                                            
           }
         </div>
-
+        {
+          error.serverError && (<p className="mb-1 text-red-600">{error.serverError}</p>)
+                                           
+          }
         <Button variant="primary" className="w-full" onClick={handleSignUp}>Sign Up</Button>
 
         <div className="text-center text-sm text-gray-500">

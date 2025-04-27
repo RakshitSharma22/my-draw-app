@@ -1,0 +1,23 @@
+{
+  "name": "http",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+   
+    "dev":"tsc && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@prisma/client": "^6.6.0",
+    "@types/express": "^5.0.1",
+    "bcryptjs": "^3.0.2",
+    "express": "^5.1.0",
+    "prisma": "^6.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

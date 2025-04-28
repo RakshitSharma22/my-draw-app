@@ -16,11 +16,14 @@ const express_1 = __importDefault(require("express"));
 const client_1 = require("@prisma/client");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const cors_1 = __importDefault(require("cors"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const app = (0, express_1.default)();
 const PORT = 8000;
 const prisma = new client_1.PrismaClient();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
+app.use((0, cookie_parser_1.default)());
 app.get("/", (req, res) => {
     res.json({ message: "Hello World !!!" });
     return;
@@ -58,6 +61,58 @@ app.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal server error' });
+    }
+}));
+app.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        console.log(req.body);
+        const { email, password } = req.body;
+        if (!email || !password) {
+            res.status(400).json({ error: "Email and password cannot be empty" });
+            return;
+        }
+        const user = yield prisma.user.findUnique({
+            where: {
+                email
+            }
+        });
+        if (!user) {
+            res.status(400).json({ error: "User does not exists" });
+            return;
+        }
+        console.log(password, user.password);
+        if (password != user.password) {
+            res.status(400).json({ error: "Password  is not matching...." });
+            return;
+        }
+        //create token
+        const token = jsonwebtoken_1.default.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            maxAge: 60 * 60 * 1000, // 1 hour
+        });
+        res.status(200).json({ message: "User logged in successfully !!!!!!!" });
+        return;
+    }
+    catch (err) {
+        console.log("something went wrong with signin !!!!");
+    }
+}));
+app.get('/profile', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const token = (_a = req.cookies) === null || _a === void 0 ? void 0 : _a.token;
+    if (!token) {
+        res.status(401).json({ message: 'No token' });
+        return;
+    }
+    try {
+        const user = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+        res.json({ user });
+    }
+    catch (err) {
+        res.status(401).json({ message: 'Invalid token' });
     }
 }));
 app.listen(PORT, () => console.log(`Server started at http://localhost:${PORT}/`));

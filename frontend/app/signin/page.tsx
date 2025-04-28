@@ -4,6 +4,8 @@ import { Input } from "@/UI/Input";
 import { ErrorState } from "@/utils/Type";
 import { validEmail, validPassword } from "@/utils/validation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import { useState } from "react";
 
 
@@ -14,6 +16,7 @@ export default function SignIn() {
   const [email,setEmail]=useState("")
   const [password,setPassword]=useState("")
   const [error,setError]=useState<ErrorState>({})
+  const router = useRouter();
  
   function onEmailChange(e:React.ChangeEvent<HTMLInputElement>){
     setEmail(e.target.value)
@@ -22,19 +25,41 @@ export default function SignIn() {
   function onPasswordChange(e:React.ChangeEvent<HTMLInputElement>){
     setPassword(e.target.value)
   }
-  function handleSignIn(e:React.MouseEvent<HTMLButtonElement>){
+  async function handleSignIn(e:React.MouseEvent<HTMLButtonElement>){
     e.preventDefault()
     setError({})
+
+    
+    const response = await fetch("http://localhost:8000/signin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+      
+        email,
+        password,
+      }),
+    });
+    const data = await response.json();
+    console.log(data)
+    if(response.ok)
+    {
+      router.push("/dashboard")
+    }
+    else{
+      setError((prev)=>({...prev,serverError:`Serve Error : ${data?.error} `}))
+    }
     
     
 
     
 
     
-    return 
+    
 
   } 
-  console.log(email,password)
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-sm bg-white p-8 rounded-2xl shadow-lg space-y-4">
@@ -46,20 +71,14 @@ export default function SignIn() {
         <div>
           <label className="block mb-1 text-md font-bold text-gray-700">Email</label>
           <Input placeholder="Enter your email" type="email" inputValue={email} onChange={onEmailChange}  />
-          {
-          error.emailError && (<p className="mb-1 text-red-600">{error.emailError}</p>)
-                                           
-          }
+        
 
         </div>
 
         <div>
           <label className="block mb-1 text-md font-bold text-gray-700">Password</label>
           <Input placeholder="Enter your password" type="password" inputValue={password} onChange={onPasswordChange} />
-          {
-          error.passwordError && (<p className="mb-1 text-red-600">{error.passwordError}</p>)
-                                           
-          }
+        
         </div>
 
         <div className="text-right">
@@ -68,6 +87,12 @@ export default function SignIn() {
           </p>
         </div>
 
+        {
+          error.serverError && (<p className="mb-1 text-red-600">{error.serverError}</p>)
+                                           
+        }
+         
+       
         <Button variant="primary" className="w-full" onClick={handleSignIn}>Sign In</Button>
 
         <div className="text-center text-sm text-gray-500">

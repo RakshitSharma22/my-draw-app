@@ -5,3 +5,5 @@ export interface ErrorState {
     confirmPasswordError?:string
     serverError?:string
   };
+
+  

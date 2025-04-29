@@ -11,7 +11,10 @@ const app=express()
 const PORT=8000
 const prisma=new PrismaClient()
 app.use(express.json())
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000', // Your frontend URL
+  credentials: true  // This is important for cookies
+}));
 app.use(cookieParser())
 
 
@@ -91,6 +94,7 @@ app.post("/signin",async (req:Request,res:Response)=>{
     res.status(400).json({error:"User does not exists"})
     return
    }
+   console.log("hello")
    
    if(password != user.password)
    {
@@ -119,20 +123,23 @@ app.post("/signin",async (req:Request,res:Response)=>{
 }
 })
 
-app.get('/profile', async (req: Request, res: Response) => {
-    const token = req.cookies?.token;
-    
+
+
+app.get("/check", (req: Request, res: Response) => {
+    const token = req.cookies.token;
   
     if (!token) {
-       res.status(401).json({ message: 'No token' });
-       return 
+     res.status(200).json({ authenticated: false });
+     return
     }
   
     try {
-      const user = jwt.verify(token, process.env.JWT_SECRET!);
-      res.json({ user });
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+       res.status(200).json({ authenticated: true });
+       return
     } catch (err) {
-      res.status(401).json({ message: 'Invalid token' });
+       res.status(200).json({ authenticated: false });
+       return
     }
-  });
+  });  
 app.listen(PORT,()=>console.log(`Server started at http://localhost:${PORT}/`))

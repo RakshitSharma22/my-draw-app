@@ -22,7 +22,10 @@ const app = (0, express_1.default)();
 const PORT = 8000;
 const prisma = new client_1.PrismaClient();
 app.use(express_1.default.json());
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: 'http://localhost:3000', // Your frontend URL
+    credentials: true // This is important for cookies
+}));
 app.use((0, cookie_parser_1.default)());
 app.get("/", (req, res) => {
     res.json({ message: "Hello World !!!" });
@@ -80,7 +83,7 @@ app.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             res.status(400).json({ error: "User does not exists" });
             return;
         }
-        console.log(password, user.password);
+        console.log("hello");
         if (password != user.password) {
             res.status(400).json({ error: "Password  is not matching...." });
             return;
@@ -100,19 +103,20 @@ app.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         console.log("something went wrong with signin !!!!");
     }
 }));
-app.get('/profile', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const token = (_a = req.cookies) === null || _a === void 0 ? void 0 : _a.token;
+app.get("/check", (req, res) => {
+    const token = req.cookies.token;
     if (!token) {
-        res.status(401).json({ message: 'No token' });
+        res.status(200).json({ authenticated: false });
         return;
     }
     try {
-        const user = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-        res.json({ user });
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+        res.status(200).json({ authenticated: true });
+        return;
     }
     catch (err) {
-        res.status(401).json({ message: 'Invalid token' });
+        res.status(200).json({ authenticated: false });
+        return;
     }
-}));
+});
 app.listen(PORT, () => console.log(`Server started at http://localhost:${PORT}/`));

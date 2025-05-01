@@ -6,12 +6,22 @@ export interface ErrorState {
     serverError?:string
   };
 
-  export type Room = {
+export type Room = {
+    id:number;
     name: string;
     description: string;
     color: string;
-    createdAt: Date;
+    createdAt: Date|string;
   };
+
+
+  export interface Message {
+    id: string;
+    sender: string;
+    senderId: string;
+    content: string;
+    timestamp: string;
+  }
   
 
 
@@ -25,3 +35,42 @@ export  const colorMap: Record<string, string> = {
     black:"bg-gray-900"
     // add more as needed
   };  
+
+
+
+export interface ChatMessageProps {
+    message: Message;
+    darkMode: boolean;
+    isCurrentUser: boolean;
+  }  
+
+
+export  interface ChatRoomProps {
+    params: {
+      roomId: string;
+    };
+  }
+
+export   interface RoomInfoSidebarProps {
+    room: Room;
+    members: Member[];
+    darkMode: boolean;
+    onClose: () => void;
+  }  
+
+
+
+
+export  interface Member {
+    id: string;
+    name: string;
+    status: string;
+    color: string;
+  }
+  
+export   interface User {
+    id: string;
+    name: string;
+  }
+  
+

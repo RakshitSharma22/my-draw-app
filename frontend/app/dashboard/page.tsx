@@ -1,9 +1,9 @@
 "use client"
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   PlusCircle, 
   Menu,
-  
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import { Sidebar } from '@/components/SideBar';
@@ -12,19 +12,14 @@ import Modal from '@/components/Modal';
 import axios from 'axios';
 import { Room, colorMap } from '@/utils/Type';
 
-
-
-
-
-
-
 export default function Dashboard() {
+  const router = useRouter();
   const [darkMode, setDarkMode] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState<boolean | null>(null);
-  const [rooms,setRooms]=useState<Room[]>([])
-  console.log(rooms)
+  const [rooms, setRooms] = useState<Room[]>([]);
+  
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
@@ -41,6 +36,11 @@ export default function Dashboard() {
     setShowModal(false);
   };
 
+  // Navigate to chat room when a room card is clicked
+  const handleRoomClick = (roomId:number) => {
+    router.push(`/room/${roomId}`);
+  };
+
   useEffect(() => {
     const fetchRooms = async () => {
       try {
@@ -49,23 +49,18 @@ export default function Dashboard() {
         });
   
         if (response.status === 200) {
-          console.log(response.data)
-          // Handle response.data if needed
-          setRooms(response.data["allRooms"])
-          setSuccessMessage(true)
+          console.log(response.data);
+          setRooms(response.data["allRooms"]);
+          setSuccessMessage(true);
         }
       } catch (error: any) {
         console.error("Error fetching rooms:", error);
         setSuccessMessage(false);
-      
       }
     };
   
-    fetchRooms(); // Call the async function
+    fetchRooms();
   }, []);
-  
-
-
   
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-800'}`}>
@@ -111,9 +106,10 @@ export default function Dashboard() {
             {rooms.map((room, index) => (
               <div 
                 key={index}
-                className={`rounded-xl p-4 md:p-6 shadow-sm border transition-all duration-300 hover:shadow-md ${
+                className={`rounded-xl p-4 md:p-6 shadow-sm border transition-all duration-300 hover:shadow-md cursor-pointer transform hover:scale-105 ${
                   darkMode ? 'bg-gray-800 border-gray-700 hover:border-gray-600' : 'bg-white border-gray-100 hover:border-gray-300'
                 }`}
+                onClick={() => handleRoomClick(room.id)}
               >
                 <div className="flex items-center mb-3 md:mb-4">
                   <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg ${colorMap[room.color.toLowerCase()]} flex items-center justify-center text-white font-bold text-sm md:text-base`}>
@@ -151,9 +147,9 @@ export default function Dashboard() {
                   }`}>
                     Active
                   </span>
-                  <button className={`text-xs md:text-sm ${darkMode ? 'text-blue-400' : 'text-blue-600'} hover:underline`}>
+                  <div className={`text-xs md:text-sm ${darkMode ? 'text-blue-400' : 'text-blue-600'} hover:underline`}>
                     View Details
-                  </button>
+                  </div>
                 </div>
               </div>
             ))}

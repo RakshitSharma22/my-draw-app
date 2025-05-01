@@ -170,4 +170,17 @@ app.get("/check", (req: Request, res: Response) => {
      res.status(201).json({ message: 'Room created successfully', room: newRoom });
      return
   });  
+
+  app.get("/room",authorize,async (req:Request,res:Response)=>{
+    try{
+      const allRooms=await prisma.room.findMany()
+      console.log(allRooms)
+      res.status(200).json({allRooms:allRooms})
+      return
+    }catch(err){
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+    
+  })
 app.listen(PORT,()=>console.log(`Server started at http://localhost:${PORT}/`))

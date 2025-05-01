@@ -29,4 +29,5 @@ model Room {
   name     String    
   description String
   color       String
+  createdAt   DateTime @default(now())
 }

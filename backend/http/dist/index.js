@@ -136,4 +136,16 @@ app.post('/room', authorize_1.authorize, (req, res) => __awaiter(void 0, void 0,
     res.status(201).json({ message: 'Room created successfully', room: newRoom });
     return;
 }));
+app.get("/room", authorize_1.authorize, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const allRooms = yield prisma.room.findMany();
+        console.log(allRooms);
+        res.status(200).json({ allRooms: allRooms });
+        return;
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}));
 app.listen(PORT, () => console.log(`Server started at http://localhost:${PORT}/`));

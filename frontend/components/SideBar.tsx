@@ -1,4 +1,5 @@
 import { Button } from '@/UI/Button';
+import { Room, colorMap } from '@/utils/Type';
 import { 
     PlusCircle, 
    
@@ -16,9 +17,10 @@ interface SidebarProps{
     isOpen:boolean
     onClose:()=>void
     darkMode:boolean
+    rooms:Room[]
 }
 
-export  const Sidebar = ({ isOpen, onClose,darkMode }:SidebarProps) => (
+export  const Sidebar = ({ isOpen, onClose,darkMode,rooms }:SidebarProps) => (
     <>
       {/* Mobile overlay */}
       {isOpen && (
@@ -90,25 +92,26 @@ export  const Sidebar = ({ isOpen, onClose,darkMode }:SidebarProps) => (
           <div>
             <p className="text-xs uppercase font-semibold text-gray-500 mb-2">Recent Rooms</p>
             <ul className="space-y-1">
-              <li>
-                <Link href="#" className={`flex items-center p-2 rounded-lg ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
-                  <div className="h-2 w-2 rounded-full bg-green-500 mr-3"></div>
-                  <span>Marketing Team</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className={`flex items-center p-2 rounded-lg ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
-                  <div className="h-2 w-2 rounded-full bg-blue-500 mr-3"></div>
-                  <span>Product Design</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className={`flex items-center p-2 rounded-lg ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
-                  <div className="h-2 w-2 rounded-full bg-purple-500 mr-3"></div>
-                  <span>Engineering</span>
-                </Link>
-              </li>
-            </ul>
+  {rooms
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) // sort by latest
+    .slice(0, 3) // get top 3
+    .map((room,index) => (
+      <li key={index}>
+        <Link
+          href="#"
+          className={`flex items-center p-2 rounded-lg ${
+            darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+          }`}
+        >
+          <div
+            className={`h-2 w-2 rounded-full ${colorMap[room.color.toLowerCase()]} mr-3`}
+          ></div>
+          <span>{room.name}</span>
+        </Link>
+      </li>
+    ))}
+</ul>
+
           </div>
         </nav>
       </aside>

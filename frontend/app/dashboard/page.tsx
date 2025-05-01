@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { 
   PlusCircle, 
   Menu,
@@ -9,6 +9,12 @@ import Navbar from '@/components/Navbar';
 import { Sidebar } from '@/components/SideBar';
 import { Button } from '@/UI/Button';
 import Modal from '@/components/Modal';
+import axios from 'axios';
+import { Room, colorMap } from '@/utils/Type';
+
+
+
+
 
 
 
@@ -16,7 +22,9 @@ export default function Dashboard() {
   const [darkMode, setDarkMode] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
+  const [successMessage, setSuccessMessage] = useState<boolean | null>(null);
+  const [rooms,setRooms]=useState<Room[]>([])
+  console.log(rooms)
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
@@ -33,6 +41,30 @@ export default function Dashboard() {
     setShowModal(false);
   };
 
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/room", {
+          withCredentials: true,
+        });
+  
+        if (response.status === 200) {
+          console.log(response.data)
+          // Handle response.data if needed
+          setRooms(response.data["allRooms"])
+          setSuccessMessage(true)
+        }
+      } catch (error: any) {
+        console.error("Error fetching rooms:", error);
+        setSuccessMessage(false);
+      
+      }
+    };
+  
+    fetchRooms(); // Call the async function
+  }, []);
+  
+
 
   
   return (
@@ -42,7 +74,7 @@ export default function Dashboard() {
       
       <div className="flex">
         {/* Sidebar */}
-        <Sidebar darkMode={darkMode} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <Sidebar rooms={rooms} darkMode={darkMode} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         
         {/* Main Content */}
         <main className="flex-1 p-3 md:p-6 w-full">
@@ -76,14 +108,7 @@ export default function Dashboard() {
           
           {/* Room Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-            {[
-              { name: 'Marketing Team', members: 8, color: 'bg-green-500' },
-              { name: 'Product Design', members: 12, color: 'bg-blue-500' },
-              { name: 'Engineering', members: 16, color: 'bg-purple-500' },
-              { name: 'Customer Support', members: 6, color: 'bg-yellow-500' },
-              { name: 'Sales', members: 10, color: 'bg-red-500' },
-              { name: 'Executive', members: 4, color: 'bg-indigo-500' },
-            ].map((room, index) => (
+            {rooms.map((room, index) => (
               <div 
                 key={index}
                 className={`rounded-xl p-4 md:p-6 shadow-sm border transition-all duration-300 hover:shadow-md ${
@@ -91,19 +116,19 @@ export default function Dashboard() {
                 }`}
               >
                 <div className="flex items-center mb-3 md:mb-4">
-                  <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg ${room.color} flex items-center justify-center text-white font-bold text-sm md:text-base`}>
-                    {room.name.substring(0, 2)}
+                  <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg ${colorMap[room.color.toLowerCase()]} flex items-center justify-center text-white font-bold text-sm md:text-base`}>
+                    {room.name.substring(0,2)}
                   </div>
                   <div className="ml-3">
                     <h3 className="font-semibold text-sm md:text-base">{room.name}</h3>
                     <p className={`text-xs md:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      {room.members} members
+                     20 members
                     </p>
                   </div>
                 </div>
                 
                 <div className="flex -space-x-2 mb-3 md:mb-4">
-                  {[...Array(Math.min(5, room.members))].map((_, i) => (
+                  {[...Array(Math.min(5, 20))].map((_, i) => (
                     <div 
                       key={i}
                       className={`w-6 h-6 md:w-8 md:h-8 rounded-full border-2 ${
@@ -111,11 +136,11 @@ export default function Dashboard() {
                       } bg-gray-300`}
                     />
                   ))}
-                  {room.members > 5 && (
+                  {20 > 5 && (
                     <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full border-2 ${
                       darkMode ? 'border-gray-800 bg-gray-700' : 'border-white bg-gray-100'
                     } flex items-center justify-center text-xs`}>
-                      +{room.members - 5}
+                      +{20 - 5}
                     </div>
                   )}
                 </div>

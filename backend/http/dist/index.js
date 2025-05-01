@@ -18,6 +18,7 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const cors_1 = __importDefault(require("cors"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const authorize_1 = require("./middleware/authorize");
 const app = (0, express_1.default)();
 const PORT = 8000;
 const prisma = new client_1.PrismaClient();
@@ -119,4 +120,20 @@ app.get("/check", (req, res) => {
         return;
     }
 });
+app.post('/room', authorize_1.authorize, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, color, description } = req.body;
+    // Basic validation
+    if (!name || !color || !description) {
+        res.status(400).json({ message: 'All fields are required: Name , Color, Description' });
+        return;
+    }
+    const newRoom = yield prisma.room.create({
+        data: {
+            name,
+            description, color
+        }
+    });
+    res.status(201).json({ message: 'Room created successfully', room: newRoom });
+    return;
+}));
 app.listen(PORT, () => console.log(`Server started at http://localhost:${PORT}/`));

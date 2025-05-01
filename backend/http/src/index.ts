@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs"
 import cors from 'cors';
 import jwt from "jsonwebtoken"
 import cookieParser from "cookie-parser";
+import { authorize} from "./middleware/authorize";
 
 
 const app=express()
@@ -83,6 +84,7 @@ app.post("/signin",async (req:Request,res:Response)=>{
     return
    }
 
+
    const user=await prisma.user.findUnique({
     where:{
         email
@@ -141,5 +143,31 @@ app.get("/check", (req: Request, res: Response) => {
        res.status(200).json({ authenticated: false });
        return
     }
+  });  
+
+
+  app.post('/room',authorize ,async (req: Request, res: Response) => {
+    const { name, color, description } = req.body;
+  
+    // Basic validation
+    if (!name || !color || !description) {
+       res.status(400).json({ message: 'All fields are required: Name , Color, Description' });
+       return
+    }
+  
+   
+   
+
+    const newRoom =await prisma.room.create(
+      {
+        data:{
+          name,
+          description,color
+        }
+      }
+    )
+  
+     res.status(201).json({ message: 'Room created successfully', room: newRoom });
+     return
   });  
 app.listen(PORT,()=>console.log(`Server started at http://localhost:${PORT}/`))

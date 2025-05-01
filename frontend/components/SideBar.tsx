@@ -13,9 +13,9 @@ import {
 import Link from 'next/link';
 
 interface SidebarProps{
-    isOpen?:boolean
-    onClose?:()=>void
-    darkMode?:boolean
+    isOpen:boolean
+    onClose:()=>void
+    darkMode:boolean
 }
 
 export  const Sidebar = ({ isOpen, onClose,darkMode }:SidebarProps) => (

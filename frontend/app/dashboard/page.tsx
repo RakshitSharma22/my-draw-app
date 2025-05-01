@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import { Sidebar } from '@/components/SideBar';
+import { Button } from '@/UI/Button';
+import Modal from '@/components/Modal';
 
 
 
@@ -46,12 +48,13 @@ export default function Dashboard() {
         <main className="flex-1 p-3 md:p-6 w-full">
           <div className="flex justify-between items-center mb-4 md:mb-6">
             <div className="flex items-center md:items-start">
-              <button 
+              <Button 
+                variant="custom"
                 onClick={toggleSidebar}
                 className="md:hidden mr-2 p-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
               >
                 <Menu className="h-6 w-6" />
-              </button>
+              </Button>
               <div>
                 <h2 className="text-xl md:text-2xl font-bold">Rooms</h2>
                 <p className={`text-xs md:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -60,14 +63,15 @@ export default function Dashboard() {
               </div>
             </div>
             
-            <button 
+            <Button 
+              variant='custom'
               onClick={openModal}
               className="flex items-center bg-blue-600 hover:bg-blue-700 text-white py-1.5 md:py-2 px-3 md:px-4 rounded-lg shadow transition-all duration-300 transform hover:scale-105 text-sm md:text-base"
             >
               <PlusCircle className="h-4 w-4 md:h-5 md:w-5 mr-1.5 md:mr-2" />
               <span className="hidden xs:inline">Create Room</span>
               <span className="xs:hidden">New</span>
-            </button>
+            </Button>
           </div>
           
           {/* Room Grid */}
@@ -134,78 +138,7 @@ export default function Dashboard() {
       
       {/* Create Room Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-3 md:p-4">
-          <div className={`w-full max-w-md rounded-xl shadow-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} p-4 md:p-6`}>
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg md:text-xl font-bold">Create New Room</h3>
-              <button 
-                onClick={closeModal}
-                className={`p-1 rounded-full ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
-              >
-                ✕
-              </button>
-            </div>
-            
-            <div className="space-y-3 md:space-y-4 mb-4 md:mb-6">
-              <div>
-                <label className={`block text-xs md:text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                  Room Name
-                </label>
-                <input 
-                  type="text" 
-                  className={`w-full p-2 rounded-lg border text-sm md:text-base ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  } focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none`}
-                  placeholder="Enter room name"
-                />
-              </div>
-              
-              <div>
-                <label className={`block text-xs md:text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                  Description
-                </label>
-                <textarea 
-                  className={`w-full p-2 rounded-lg border text-sm md:text-base ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  } focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none h-20 md:h-24`}
-                  placeholder="Enter room description"
-                />
-              </div>
-              
-              <div>
-                <label className={`block text-xs md:text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                  Room Color
-                </label>
-                <div className="flex space-x-2">
-                  {['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-yellow-500', 'bg-red-500', 'bg-indigo-500'].map((color, index) => (
-                    <button 
-                      key={index}
-                      className={`w-6 h-6 md:w-8 md:h-8 rounded-full ${color} border-2 ${
-                        index === 0 ? (darkMode ? 'border-gray-300' : 'border-gray-800') : 'border-transparent'
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex space-x-3">
-              <button 
-                onClick={closeModal}
-                className={`flex-1 py-1.5 md:py-2 px-3 md:px-4 rounded-lg border text-sm md:text-base ${
-                  darkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-300 hover:bg-gray-100'
-                }`}
-              >
-                Cancel
-              </button>
-              <button 
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 md:py-2 px-3 md:px-4 rounded-lg shadow text-sm md:text-base"
-              >
-                Create Room
-              </button>
-            </div>
-          </div>
-        </div>
+       <Modal darkMode={darkMode} closeModal={closeModal}/>
       )}
     </div>
   );

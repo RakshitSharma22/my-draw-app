@@ -19,7 +19,8 @@ export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState<boolean | null>(null);
   const [rooms, setRooms] = useState<Room[]>([]);
-  
+  console.log(rooms)
+
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
@@ -50,7 +51,7 @@ export default function Dashboard() {
   
         if (response.status === 200) {
           console.log(response.data);
-          setRooms(response.data["allRooms"]);
+          setRooms(response.data["rooms"]);
           setSuccessMessage(true);
         }
       } catch (error: any) {
@@ -102,7 +103,7 @@ export default function Dashboard() {
           </div>
           
           {/* Room Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+          { rooms && <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             {rooms.map((room, index) => (
               <div 
                 key={index}
@@ -153,7 +154,8 @@ export default function Dashboard() {
                 </div>
               </div>
             ))}
-          </div>
+          </div>}
+         
         </main>
       </div>
       

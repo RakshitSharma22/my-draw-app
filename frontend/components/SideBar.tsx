@@ -34,7 +34,7 @@ export  const Sidebar = ({ isOpen, onClose,darkMode,rooms }:SidebarProps) => (
       <aside 
         className={`fixed md:static inset-y-0 left-0 z-30 w-64 transform ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0 transition-transform duration-300 ease-in-out border-r h-full overflow-y-auto ${
+        } md:translate-x-0 transition-transform duration-300 ease-in-out border-r h-screen overflow-y-auto ${
           darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
         }`}
       >
@@ -92,8 +92,8 @@ export  const Sidebar = ({ isOpen, onClose,darkMode,rooms }:SidebarProps) => (
           <div>
             <p className="text-xs uppercase font-semibold text-gray-500 mb-2">Recent Rooms</p>
             <ul className="space-y-1">
-  {rooms
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) // sort by latest
+  { rooms
+    ?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) // sort by latest
     .slice(0, 3) // get top 3
     .map((room,index) => (
       <li key={index}>

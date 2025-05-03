@@ -22,6 +22,8 @@ model User{
   email     String   @unique
   password  String
 
+  member    Member?
+
 }
 
 model Room {
@@ -29,5 +31,46 @@ model Room {
   name     String    
   description String
   color       String
+  messages    Message[] // Messages in this room
+
   createdAt   DateTime @default(now())
 }
+
+
+model Member {
+  id        String    @id @default(uuid())
+  name      String
+  status    String    @default("Offline") // Online, Away, Offline
+  color     String
+  messages  Message[] // Relation to messages sent by this member
+  // Optional relation to User (authentication)
+  userId    Int?      @unique
+  user      User?     @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("members")
+}
+
+
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  timestamp DateTime @default(now())
+  
+  // Relation to the sender
+  senderId  String
+  sender    Member   @relation(fields: [senderId], references: [id])
+  
+  // Optional - if you have rooms/channels
+  roomId    Int?
+  room      Room?    @relation(fields: [roomId], references: [id])
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("messages")
+}
+
+
